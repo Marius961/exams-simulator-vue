@@ -5,11 +5,11 @@ export default class TestsParser {
 
 	parseTxtToObject(event) {
 		let array = event.target.result.split(/\n\s*\n|\r\n\s*\r\n/);
-		for (let i = 0; i < array.length; i++) {
-			if (array[i].trim() !== "") {
-				this.parseRawQuestionToObject(i, array[i])
-			}
-		}
+		array.map((elem, index) => {
+      if (elem.trim() !== "") {
+        this.parseRawQuestionToObject(index, elem)
+      }
+    })
 		return this.questionsList
 	}
 
@@ -22,24 +22,23 @@ export default class TestsParser {
 
 		let questionText = tempOptions[0],
 			correctOptionId = 0,
-			options = [];
+			options;
 
 		tempOptions.shift();
 
-		for (let i = 0; i < tempOptions.length; i++) {
-			let text = tempOptions[i].trim();
-			if (text !== "") {
-				if (text.substr(0, 1) === '+') {
-					correctOptionId = i;
-					text = text.substr(1);
-				}
 
-				options.push({
-					id: i,
-					text: text
-				})
-			}
-		}
+    options = tempOptions.map((elem, index) => {
+      let text = elem.trim();
+      if (text !== "") {
+        if (text.substr(0, 1) === '+') {
+          correctOptionId = index;
+          text = text.substr(1);
+        }
+
+        return { id: index, text: text}
+      }
+    })
+
 		this.questionsList.questions.push({
 			id: questionId,
 			question:questionText,

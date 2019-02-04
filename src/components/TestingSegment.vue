@@ -16,7 +16,7 @@
 </template>
 
 <script>
-	import TestsProcessor from '../assets/js/testsProcessor'
+	import TestsProcessor from '../../utils/testsProcessor'
 
 	export default {
     props: {

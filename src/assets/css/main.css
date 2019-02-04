@@ -238,3 +238,12 @@ input[type=radio] {
     display: flex;
     height: 100%;
 }
+
+.logo-1 {
+  color: darkorange;
+
+}
+
+.logo-2 {
+  color: #a09dab;
+}

@@ -12,12 +12,12 @@
 
           <input class="col-12 inputFile" id="file" v-on:change="inputChange" type="file">
           <label for="file" class="col-12 col-sm-auto upload-btn p-2 pl-3 pr-3">
-            <div class="row align-items-center justify-content-center">
-              <div class="col-auto">
-                <img src="../assets/img/upload.png">
-              </div>
-              <div class="col-auto text-center">Завантажити файл</div>
-            </div>
+            <span class="row align-items-center justify-content-center">
+              <span class="col-auto">
+                <img src="../assets/img/upload.png" alt=">">
+              </span>
+              <span class="col-auto text-center">Завантажити файл</span>
+            </span>
           </label>
 
           <div class="w-100"></div>
@@ -27,24 +27,9 @@
 
           <div class="col-auto" v-if="showTestParams">
             <div class="row">
-              <div class="col-12  mt-2 col-md-4 m-md-0">
-                <div class="row custom-control custom-checkbox text-center justify-content-center">
-                  <input type="checkbox" v-model="testParams" value="expressTest" class="col-auto custom-control-input " id="expressTest">
-                  <label class="col-auto custom-control-label p-0 pr-2" for="expressTest" data-toggle="tooltip" data-placement="bottom" title="30 тестів (у випадку якщо загальна кількість більше 30)">Експрес тест</label>
-                </div>
-              </div>
-              <div class="col-12  mt-2 col-md-4 m-md-0">
-                <div class="row custom-control custom-checkbox text-center justify-content-center">
-                  <input type="checkbox" v-model="testParams" value="shuffleQuestions" class="col-auto custom-control-input " checked id="shuffleQuestions">
-                  <label class="col-auto custom-control-label p-0 pr-2" for="shuffleQuestions" data-toggle="tooltip" data-placement="bottom" title="Перемішати питання">Перемішати питання</label>
-                </div>
-              </div>
-              <div class="col-12  mt-2 col-md-4 m-md-0">
-                <div class="row custom-control custom-checkbox text-center justify-content-center">
-                  <input type="checkbox" v-model="testParams" value="shuffleOptions" class="col-auto custom-control-input" checked id="shuffleOptions">
-                  <label class="col-auto custom-control-label p-0 pr-2" for="shuffleOptions" data-toggle="tooltip" data-placement="bottom" title="Перемішати відповіді">Перемішати відповіді</label>
-                </div>
-              </div>
+              <app-checkbox v-model="isExpressTest" check-id="expressTest">Експрес тест</app-checkbox>
+              <app-checkbox v-model="shuffleOptions" check-id="shuffleOptions">Перемішати відповіді</app-checkbox>
+              <app-checkbox v-model="shuffleQuestions" check-id="shuffleQuestions">Перемішати питання</app-checkbox>
             </div>
           </div>
 
@@ -58,20 +43,22 @@
           <div class="col-12 mt-3">
             <div class="row info-container p-3">
               <div class="col-12 text-center info-header" @click="templateVisibility = !templateVisibility">Оформлення для сумісного TXT файлу</div>
-              <div class="col-12" v-if="templateVisibility">
-                <div class="row justify-content-center">
-                  <div class="col-12 text-center">Примітка: між запитаннями повинно бути 2 пустих рядки, "_" - пустий рядок</div>
-                  <div class="w-50 hr-orange mt-3 mb-3"></div>
-                </div>
-                <div class="row">
-                  <div class="col-12">Питання яке міститься в одному рядку</div>
-                  <div class="col-12">&ensp;Перший варіант відповіді</div>
-                  <div class="col-12">&ensp;Другий варіант відповіді</div>
-                  <div class="col-12">&ensp;Третій варіант відповіді</div>
-                  <div class="col-12">&ensp;+Четвертий варіант відповіді правильний, позначається за допомогою знака "+"</div>
-                  <div class="col-12">_</div>
-                  <div class="col-12">_</div>
-                  <div class="col-12">&ensp;...</div>
+              <div class="row" v-if="templateVisibility" style="overflow: hidden">
+                <div class="col-12">
+                  <div class="row justify-content-center">
+                    <div class="col-12 text-center">Примітка: між запитаннями повинно бути 2 пустих рядки, "_" - пустий рядок</div>
+                    <div class="w-50 hr-orange mt-3 mb-3"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">Питання яке міститься в одному рядку</div>
+                    <div class="col-12">&ensp;Перший варіант відповіді</div>
+                    <div class="col-12">&ensp;Другий варіант відповіді</div>
+                    <div class="col-12">&ensp;Третій варіант відповіді</div>
+                    <div class="col-12">&ensp;+Четвертий варіант відповіді правильний, позначається за допомогою знака "+"</div>
+                    <div class="col-12">_</div>
+                    <div class="col-12">_</div>
+                    <div class="col-12">&ensp;...</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -99,8 +86,9 @@
 
 <script>
   import TestingSegment from '../components/TestingSegment'
-	import TestsParser from '../assets/js/testsParser'
+	import TestsParser from '../../utils/testsParser'
   import ResultComponent from '../components/ResultComponent'
+  import AppCheckbox from '../components/CheckBox'
   export default {
     data() {
       return {
@@ -111,18 +99,21 @@
         testingComponentVisible: false,
 				resultComponentVisibility: false,
 				showTestParams: false,
-				testParams: [],
-        testResult: {}
+        testResult: {},
+        isExpressTest: false,
+        shuffleQuestions: false,
+        shuffleOptions: false
 			}
     },
     components: {
       'testing-segment': TestingSegment,
-      'result-component': ResultComponent
+      'result-component': ResultComponent,
+      'app-checkbox': AppCheckbox
     },
     methods: {
       inputChange(event) {
-      	let parser = new TestsParser();
-        let reader = new FileReader(),
+      	const parser = new TestsParser();
+        const reader = new FileReader(),
           fileName = event.target.files[0].name,
           lastIndex = fileName.lastIndexOf('.'),
           type = fileName.substr(lastIndex);
@@ -166,15 +157,15 @@
 				this.resultComponentVisibility = true;
 			},
       addParamsToTest(list) {
-        if (this.testParams.indexOf('shuffleQuestions') > -1) {
+        if (this.shuffleQuestions) {
           list.questions = this.shuffledArray(list.questions)
         }
 
-        if (this.testParams.indexOf('expressTest') > -1 && list.questions.length > 30) {
+        if (this.isExpressTest && list.questions.length > 30) {
           list.questions.length = 30;
         }
 
-        if (this.testParams.indexOf('shuffleOptions') > -1) {
+        if (this.shuffleOptions) {
           for (let i = 0; i < list.questions.length; i++) {
             list.questions[i].options = this.shuffledArray(list.questions[i].options)
           }

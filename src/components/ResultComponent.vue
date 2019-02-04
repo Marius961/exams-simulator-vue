@@ -8,21 +8,14 @@
           <div class="col-12 btn-orange-secondary-borderLess p-2"
                @click="showWrongAnswers = !showWrongAnswers"
                v-if="isArrayNotEmpty"
-          >Неправильних відповідей {{result.wrongAnswersLog.length}}
+          >Неправильних відповідей {{getWrongAnswersArrayLength}}
           </div>
           <div class="col-12" v-if="showWrongAnswers">
             <div class="row mt-1 pt-4" v-for="question in result.wrongAnswersLog">
               <div class="col-12 question-text" v-html="question.questionText"></div>
-              <div class="col-12">
-                <div class="row ml-sm-4 pl-5 pt-2 pb-2 option-2 correct-answer">
-                  <label class="col-12 option-1">{{question.selectedOptionText}}</label>
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="row ml-sm-4 pl-5 pt-2 pb-2 option-2 wrong-answer">
-                  <label class="col-12 option-1">{{question.correctOptionText}}</label>
-                </div>
-              </div>
+
+              <question-log-item questionClass="correct-answer">{{question.selectedOptionText}}</question-log-item>
+              <question-log-item questionClass="wrong-answer">{{question.correctOptionText}}</question-log-item>
             </div>
           </div>
         </div>
@@ -57,6 +50,7 @@
 </template>
 
 <script>
+  import QuestionLogItem from '../components/QuestionLogItem'
   export default {
     props: {
       result: {
@@ -69,9 +63,12 @@
         showWrongAnswers: false,
       }
     },
+    components: {
+      'question-log-item': QuestionLogItem
+    },
     watch: {
       result: {
-        handler: function (newResult, oldResult) {
+        handler: function () {
           this.$emit("showResult")
         },
         deep: true
@@ -86,6 +83,11 @@
       },
       isArrayNotEmpty() {
         return typeof this.result.wrongAnswersLog !== 'undefined' && this.result.wrongAnswersLog.length > 0
+      },
+      getWrongAnswersArrayLength() {
+        if (this.isArrayNotEmpty) {
+          return this.result.wrongAnswersLog.length;
+        }
       }
     }
   }
